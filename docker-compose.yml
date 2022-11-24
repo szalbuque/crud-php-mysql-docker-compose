@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  
+  db:
+    image: szalbuque/cadastro-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "12345"
+      MYSQL_DATABASE: "cadastro"
+    ports:
+      - "3306:3306"
+  
+  web:
+    image: szalbuque/cadastro-app-php:1.0
+    ports:
+      - "8081:80"

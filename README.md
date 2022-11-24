@@ -5,37 +5,31 @@ Foi testada usando o XAMPP no Windows 10.
 Ela usa HTML+CSS+JS(Bootstrap)+PHP  e o banco de dados roda em MySQL.
 
 Depois que estava funcionando no servidor local, transformei em dois containers docker, criando as imagens e os containers separadamente.
-
-## Criação das imagens e dos containers
-### Do banco de dados:
-O arquivo crud-php-sql-docker\dockerfile cria a imagem do mysql preparada para criar a tabela usuarios no banco de dados cadastro (schema.sql)
-Para criar a imagem, rodar:
-> docker build -t szalbuque/cadastro-db .  
-
-Para gerar o container com esta imagem, criando o database cadastro, rodar (usei a porta 3307 porque a 3306 já estava sendo usada):
-> docker run -d -p 3307:3306 -e MYSQL_ROOT_PASSWORD=12345 -e MYSQL_DATABASE=cadastro -e MYSQL_USER=MainUser -e MYSQL_PASSWORD=MainPassword cadastro-db
-
-Para acessar o container e verificar se o banco foi criado, rodar:
-> docker container ps (para pegar o ID do container)
-> 
-> docker exec -ti iddocontainer bash
-> 
-> bash-4.2# mysql -u root -p
-> 
-> mysql> use cadastro;
-> 
-> mysql> select * from usuarios;
-> 
-> mysql> exit
-> 
-> bash-4.2# exit
-
-* Usei o MySQL Workbench e consegui conectar ao banco de dados, vi o database e a tabela criada.
-
-### Da aplicação:
-> $ docker build -t szalbuque/cadastro-app-php:1.0 .
+Neste repositório, criei o docker-compose.yml, para gerar automaticamente os containers e executar a aplicação.
+O IP do container do mysql está inserido no arquivo config.php, que fica no container da aplicação. Por este motivo, depois de rodar o comando:
+> docker-compose up
 >
-> $ docker run -d -p 8081:80 szalbuque/cadastro-app-php:1.0
+É necessário rodar os comandos:
+> docker network ls (para ver ID nome da rede default)
+>
+> docker network inspect iddarede (para ver o IP que foi atribuído ao container do mysql)
+>
+> docker container exec -ti IDdocontainerapp bash
+>
+Entrar no arquivo config.php e alterar o IP.
+
+## Melhorias a fazer:
+### No arquivo docker-compose.yml:
+Criar uma rede e configurar os containers para utilizá-la.
+
+### No container mysql:
+Atribuir um nome ao banco de dados, pelo qual a aplicação possa referenciá-lo, ao invés de usar o IP.
+
+### No container da aplicação:
+No arquivo config.php, usar o nome do banco de dados, ao invés do IP.
 
 ## Para testar a aplicação, acessar este endereço no navegador local:
 http://localhost:8081/
+
+## As imagens utilizadas estão no meu repositório do docker hub (szalbuque).
+### Veja o repositório: https://github.com/szalbuque/crud-php-sql
